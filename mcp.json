@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "0g-voice-assistant": {
+      "command": "node",
+      "args": ["dist/mcp-server.js"],
+      "env": {}
+    }
+  }
+}

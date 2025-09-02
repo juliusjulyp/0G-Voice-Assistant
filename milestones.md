@@ -108,7 +108,7 @@ NOTE: Each wave implementation are subject to change depending on completion  an
   - 0G testnet connection
   - Account management
   - Transaction signing
-  - Gas estimation
+
 
 #### ** Core Operations**
 - [ ] **Basic Blockchain Operations**

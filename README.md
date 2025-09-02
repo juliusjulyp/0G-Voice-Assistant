@@ -77,14 +77,8 @@ Unlike traditional blockchain voice assistants, 0G Voice Assistant is built **na
 **Core Components**:
 - **0G MCP Server**: Real-time 0G network communication
 - **Natural Language Parser**: 0G-specific command interpretation
-- **Security Framework**: Private key management, transaction confirmations
 - **TypeScript SDK Integration**: Full 0G ecosystem access
 
-**Key Features**:
-- "Deploy AI model to 0G compute network"
-- "Store training dataset in 0G storage"
-- "Run inference on deployed model"
-- "Check AI operation costs"
 
 ### **Wave 3: AI-Blockchain Integration** 🤖
 **Focus**: Advanced AI capabilities on 0G infrastructure
