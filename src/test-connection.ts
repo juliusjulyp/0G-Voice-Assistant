@@ -6,7 +6,7 @@ async function test0GConnection() {
   const client = new OGNetworkClient();
   
   try {
-    // Test basic connection
+    // Test  connection
     const connected = await client.connect();
     
     if (connected) {

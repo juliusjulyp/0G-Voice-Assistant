@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Coming Soon - 0G Voice Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Coming Soon Page Specific Styles */
+        .coming-soon-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            padding: 2rem;
+        }
+
+        .coming-soon-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coming-soon-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00d4ff, #ff00ff);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .construction-icon {
+            font-size: 4rem;
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .coming-soon-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00d4ff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .coming-soon-subtitle {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .feature-preview {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .feature-preview h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .feature-preview ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-preview li {
+            color: #b0b0b0;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-preview i {
+            color: #00d4ff;
+            font-size: 0.8rem;
+        }
+
+        .email-form {
+            margin: 2rem 0;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .email-input::placeholder {
+            color: #888;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #00d4ff, #ff00ff);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message {
+            background: rgba(40, 202, 66, 0.2);
+            border: 1px solid rgba(40, 202, 66, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #28ca42;
+            display: none;
+        }
+
+        .error-message {
+            background: rgba(255, 71, 87, 0.2);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #ff4757;
+            display: none;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: #ff00ff;
+            transform: translateX(-5px);
+        }
+
+        .roadmap-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .roadmap-preview h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .roadmap-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: #b0b0b0;
+        }
+
+        .roadmap-item i {
+            color: #00d4ff;
+            width: 20px;
+        }
+
+        .roadmap-item.completed {
+            color: #28ca42;
+        }
+
+        .roadmap-item.completed i {
+            color: #28ca42;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .coming-soon-content {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .coming-soon-title {
+                font-size: 2rem;
+            }
+
+            .construction-icon {
+                font-size: 3rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-dots {
+            display: inline-flex;
+            gap: 0.25rem;
+            margin-left: 0.5rem;
+        }
+
+        .loading-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #00d4ff;
+            animation: loading-dot 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes loading-dot {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="coming-soon-container">
+        <div class="coming-soon-content">
+            <div class="construction-icon">
+                <i class="fas fa-tools"></i>
+            </div>
+            
+            <h1 class="coming-soon-title">Feature Coming Soon!</h1>
+            
+            <p class="coming-soon-subtitle">
+                We're building something amazing for you. This feature is currently under development and will be available shortly.
+            </p>
+
+            <div class="feature-preview">
+                <h3><i class="fas fa-rocket"></i> What We're Building:</h3>
+                <ul>
+                    <li><i class="fas fa-check"></i> Interactive documentation with live examples</li>
+                    <li><i class="fas fa-check"></i> Step-by-step guided tutorials</li>
+                    <li><i class="fas fa-check"></i> Real-time 0G network integration</li>
+                    <li><i class="fas fa-check"></i> Live command testing interface</li>
+                    <li><i class="fas fa-check"></i> Voice command demonstrations</li>
+                </ul>
+            </div>
+
+            <div class="roadmap-preview">
+                <h3><i class="fas fa-map"></i> Current Progress:</h3>
+                <div class="roadmap-item completed">
+                    <i class="fas fa-check-circle"></i>
+                    <span>0G Storage Integration - COMPLETED</span>
+                </div>
+                <div class="roadmap-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Interactive Documentation - IN PROGRESS</span>
+                </div>
+                <div class="roadmap-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Live Network Integration - COMING SOON</span>
+                </div>
+            </div>
+
+            <div class="email-form">
+                <h3><i class="fas fa-bell"></i> Get Notified When It's Ready:</h3>
+                <input type="email" class="email-input" id="emailInput" placeholder="Enter your email address">
+                <button class="btn-primary" id="notifyBtn" onclick="handleNotifyMe()">
+                    <i class="fas fa-paper-plane"></i>
+                    Notify Me When Ready
+                </button>
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i> Thanks! We'll notify you when this feature is ready.
+                </div>
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i> Please enter a valid email address.
+                </div>
+            </div>
+
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Main Interface
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Handle email notification
+        function handleNotifyMe() {
+            const emailInput = document.getElementById('emailInput');
+            const notifyBtn = document.getElementById('notifyBtn');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            const email = emailInput.value.trim();
+            
+            // Simple email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!email || !emailRegex.test(email)) {
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                return;
+            }
+            
+            // Show loading state
+            notifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subscribing...';
+            notifyBtn.disabled = true;
+            
+            // Simulate API call (replace with actual backend call)
+            setTimeout(() => {
+                // In a real implementation, this would call your backend API
+                console.log('Email notification signup:', email);
+                
+                // Show success message
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'block';
+                
+                // Reset button
+                notifyBtn.innerHTML = '<i class="fas fa-check"></i> Subscribed!';
+                notifyBtn.style.background = 'linear-gradient(135deg, #28ca42, #20a020)';
+                
+                // Clear input
+                emailInput.value = '';
+                
+                // Reset button after delay
+                setTimeout(() => {
+                    notifyBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Notify Me When Ready';
+                    notifyBtn.disabled = false;
+                    notifyBtn.style.background = 'linear-gradient(135deg, #00d4ff, #ff00ff)';
+                    successMessage.style.display = 'none';
+                }, 3000);
+                
+            }, 1500);
+        }
+
+        // Handle Enter key in email input
+        document.getElementById('emailInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleNotifyMe();
+            }
+        });
+
+        // Auto-focus email input
+        window.addEventListener('load', function() {
+            document.getElementById('emailInput').focus();
+        });
+    </script>
+</body>
+</html>

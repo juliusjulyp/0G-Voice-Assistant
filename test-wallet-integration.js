@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-//  test script to verify MCP server functionality
+// Test script for wallet integration functionality
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -8,14 +8,14 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-console.log('🧪 Testing 0G MCP Server...\n');
+console.log('🧪 Testing 0G MCP Server Wallet Integration...\n');
 
-// Test the MCP server
+// Test the MCP server with wallet functionality
 const server = spawn('node', [join(__dirname, 'dist', 'mcp-server.js')], {
   stdio: ['pipe', 'pipe', 'inherit']
 });
 
-// Test messages
+// Test messages for wallet integration
 const testMessages = [
   {
     jsonrpc: '2.0',
@@ -37,7 +37,16 @@ const testMessages = [
     id: 3,
     method: 'tools/call',
     params: {
-      name: 'get_network_info',
+      name: 'get_gas_price',
+      arguments: {}
+    }
+  },
+  {
+    jsonrpc: '2.0',
+    id: 4,
+    method: 'tools/call',
+    params: {
+      name: 'get_wallet_info',
       arguments: {}
     }
   }
@@ -69,12 +78,12 @@ server.on('error', (error) => {
 
 // Handle server exit
 server.on('exit', (code) => {
-  console.log(`\n✅ Test completed with exit code: ${code}`);
+  console.log(`\n✅ Wallet integration test completed with exit code: ${code}`);
 });
 
 // Start the test
 setTimeout(() => {
-  console.log('🚀 Starting MCP server test...\n');
+  console.log('🚀 Starting wallet integration test...\n');
   const firstMessage = JSON.stringify(testMessages[0]) + '\n';
   server.stdin.write(firstMessage);
   messageIndex = 1;

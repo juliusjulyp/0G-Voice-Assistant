@@ -20,9 +20,10 @@
   "author": "0G Voice Assistant Team",
   "license": "MIT",
   "dependencies": {
-    "@0glabs/0g-ts-sdk": "^0.1.0",
+    "@0glabs/0g-ts-sdk": "^0.1.2",
     "@modelcontextprotocol/sdk": "^1.17.4",
-    "ethers": "^6.10.0",
+    "ethers": "^6.15.0",
+    "firebase-tools": "^14.18.0",
     "ws": "^8.16.0"
   },
   "devDependencies": {

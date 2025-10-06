@@ -2,10 +2,9 @@
 
 NOTE: Each wave implementation are subject to change depending on completion  and therefore this is an overview of what is expected as we keep building.
 ## **Wave 1: Project Research & Architecture Design** 🔬
-**Duration**: 2 weeks  
 **Status**: 📋 **PLANNED**
 
-### **Week 1: 0G Ecosystem Deep Dive**
+### ** 0G Ecosystem Deep Dive**
 #### ** Network Architecture Research**
 - [ ] **0G Consensus Layer Analysis**
   - CometBFT optimization parameters
@@ -20,7 +19,7 @@ NOTE: Each wave implementation are subject to change depending on completion  an
   - Gas optimization strategies
 
 - [ ] **Network Configuration Documentation**
-  - Chain ID: 16601 (Galileo Testnet)
+  - Chain ID: 16602 (Galileo Testnet)
   - RPC endpoints mapping
   - Storage network integration points
   - Faucet and explorer URLs
@@ -57,7 +56,7 @@ NOTE: Each wave implementation are subject to change depending on completion  an
   - Storage optimization strategy
   - Cost reduction mechanisms
 
-### **Week 2: Competitive Analysis & Requirements**
+### ** Competitive Analysis & Requirements**
 #### ** Market Research**
 - [ ] **Competitive Landscape Analysis**
   - Existing blockchain voice assistants
@@ -65,24 +64,18 @@ NOTE: Each wave implementation are subject to change depending on completion  an
   - 0G ecosystem projects
   - Developer tool gaps
 
-- [ ] **User Persona Development**
-  - AI researchers without blockchain expertise
-  - Blockchain developers exploring AI
-  - Enterprise AI teams
-  - Accessibility-focused developers
 
 #### ** Technical Requirements**
 - [ ] **Performance Requirements**
   - Response time targets (<2 seconds)
   - Accuracy benchmarks (95%+)
-  - Cost optimization targets (99.9% reduction)
+  - Cost optimization targets 
   - Scalability requirements
 
 - [ ] **Security Requirements**
   - Private key management strategy
   - Transaction confirmation flows
   - Multi-signature support
-  - Hardware wallet integration
 
 #### ** Architecture Finalization**
 - [ ] **Technical Specification Document**
@@ -205,6 +198,14 @@ NOTE: Each wave implementation are subject to change depending on completion  an
 
 ### ** Storage Optimization**
 #### ** Dataset Management**
+- [x] **0G Storage Integration - COMPLETED** ✅
+  - ✅ File upload/download with Merkle tree verification
+  - ✅ Voice-controlled storage operations
+  - ✅ Buffer upload for generated content
+  - ✅ File existence checking and info retrieval
+  - ✅ Integration with MCP server tools
+  - ✅ Natural language commands for storage operations
+
 - [ ] **Large Dataset Handling**
   - Chunked upload/download
   - Compression optimization

@@ -3,7 +3,7 @@
 ## The Next Evolution of AI-Powered Blockchain Development
 
 ### **Vision Statement**
-Transform 0G blockchain development from complex technical workflows into natural conversations. The 0G Voice Assistant leverages 0G's AI-native infrastructure to create the  first voice-controlled development environment specifically optimized for AI and blockchain applications.
+Transform 0G blockchain development and learning curve from complex technical workflows(especially for beginners and disabled) into natural conversations. The 0G Voice Assistant leverages 0G's AI-native infrastructure to create the  first voice/text-controlled development and learnign environment specifically optimized for AI and blockchain applications.
 
 ---
 
@@ -41,14 +41,14 @@ Developers currently need:
 
 ## **Our Solution: 0G Voice Assistant**
 
-A revolutionary multimodal AI development environment that enables developers to build, deploy, and manage AI-blockchain applications through natural voice commands OR text input, leveraging 0G's native AI infrastructure.
+A  multimodal AI development environment that enables developers to build, deploy, and manage AI-blockchain applications through natural voice commands OR text input, leveraging 0G's native AI infrastructure.
 
 ### **Core Innovation**
 Unlike traditional blockchain voice assistants, 0G Voice Assistant is built **natively** on 0G's AI-optimized architecture, providing:
 - **Sub-second AI model deployment** (vs minutes on traditional chains)
 - **Fraction-of-a-cent costs** for AI operations (vs $1M+ on Ethereum)
 - **Real-time AI inference** directly on-chain
-- **Voice-controlled AI model training** and fine-tuning
+- **Voice-controlled AI model training** and fine-tuning (Will come later)
 
 ---
 
@@ -82,6 +82,20 @@ Unlike traditional blockchain voice assistants, 0G Voice Assistant is built **na
 
 ### **Wave 3: AI-Blockchain Integration** 🤖
 **Focus**: Advanced AI capabilities on 0G infrastructure
+
+ [x] **0G Storage Integration - COMPLETED** ✅
+  - ✅ File upload/download with Merkle tree verification
+  - ✅ Voice-controlled storage operations
+  - ✅ Buffer upload for generated content
+  - ✅ File existence checking and info retrieval
+  - ✅ Integration with MCP server tools
+  - ✅ Natural language commands for storage operations
+
+- [ ] **Large Dataset Handling**
+  - Chunked upload/download
+  - Compression optimization
+  - Verification mechanisms
+  - Resume capabilities
 
 **Advanced Features**:
 - **Voice Processing Engine**
@@ -150,6 +164,36 @@ Unlike traditional blockchain voice assistants, 0G Voice Assistant is built **na
 - **Precompile Access**: AI-optimized blockchain operations
 - **Parallel Processing**: Batch AI operations for efficiency
 - **Sub-second Finality**: Real-time AI application deployment
+
+
+
+
+
+### **0G Storage Integration - NEW!** 🗂️
+**Status**: ✅ **COMPLETED** - Wave 3 Implementation
+
+The 0G Voice Assistant now includes comprehensive 0G Storage functionality:
+
+- **File Upload/Download**: Upload any file to 0G Storage with voice commands
+- **Merkle Root Verification**: Calculate and verify file integrity using Merkle trees
+- **Buffer Upload**: Upload generated content directly from memory
+- **File Information**: Check file availability and get storage details
+- **Voice Commands**: Natural language storage operations
+
+**Voice Command Examples**:
+```
+"Upload my contract source code to 0G storage"
+"Download the file with root hash 0x123..."
+"Calculate the Merkle root for my deployment package"
+"Check if this file exists in 0G storage"
+```
+
+**Technical Features**:
+- **Merkle Tree Integration**: Automatic hash calculation and verification
+- **Resource Management**: Proper file cleanup and error handling
+- **Wallet Integration**: Seamless connection with existing wallet infrastructure
+- **TypeScript SDK**: Built on official 0G Storage TypeScript SDK
+- **MCP Server Tools**: 4 new storage tools for comprehensive file management
 
 ---
 
@@ -221,7 +265,7 @@ Unlike traditional blockchain voice assistants, 0G Voice Assistant is built **na
 |------|----------|------------|------------------|
 | **Wave 1** | 2 weeks | Research & Architecture | Technical specs, 0G integration strategy |
 | **Wave 2** | 3 weeks | Foundation Infrastructure | MCP server, voice processing, security |
-| **Wave 3** | 4 weeks | AI-Blockchain Integration | Model training, inference, optimization |
+| **Wave 3** | 4 weeks | AI-Blockchain Integration | 0G storage Integration, Model training, inference, optimization |
 | **Wave 4** | 3 weeks | Development Environment | VS Code extension, web interface |
 | **Wave 5** | 4 weeks | Advanced AI Features | Enterprise capabilities, optimization |
 | **Wave 6** | 3 weeks | Ecosystem & Community | Community features, partnerships |

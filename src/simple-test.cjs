@@ -1,4 +1,3 @@
-// Simple network connectivity test without TypeScript
 const https = require('https');
 
 async function testNetworkConnectivity() {
@@ -39,6 +38,5 @@ async function testNetworkConnectivity() {
   }
 }
 
-// Test basic internet connectivity
 console.log('🌐 Testing basic internet connectivity...');
 testNetworkConnectivity();
