@@ -8,6 +8,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
+    "start:api": "node dist/api-server-runner.js",
+    "start:mcp": "node dist/mcp-server.js",
     "test": "node --test dist/test/*.js"
   },
   "keywords": [
@@ -22,13 +24,28 @@
   "dependencies": {
     "@0glabs/0g-ts-sdk": "^0.1.2",
     "@modelcontextprotocol/sdk": "^1.17.4",
-    "ethers": "^6.15.0",
+    "@types/multer": "^2.0.0",
+    "axios": "^1.12.2",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "ethers": "^6.13.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
     "firebase-tools": "^14.18.0",
+    "helmet": "^7.1.0",
+    "multer": "^2.0.2",
+    "socket.io": "^4.7.4",
     "ws": "^8.16.0"
   },
   "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.23",
+    "@types/helmet": "^0.0.48",
     "@types/node": "^20.11.0",
-    "@types/ws": "^8.5.10",
+    "@types/ws": "^8.18.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }

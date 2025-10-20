@@ -1,21 +1,30 @@
 import { ethers } from 'ethers';
 import { OG_CONFIG } from './config.js';
 
-// Primary RPC endpoint - 0G Galileo Testnet
+// 0G Galileo Testnet RPC endpoints with fallbacks
 const RPC_ENDPOINTS = [
-  'https://evmrpc-testnet.0g.ai' // Primary development endpoint
-
+  'https://0g-galileo-testnet.drpc.org', // DRPC (primary - working)
+  'https://evmrpc-testnet.0g.ai', // Official 0G RPC (fallback)
 ];
 
 export class OGNetworkClient {
   private provider: ethers.JsonRpcProvider;
-  private network: ethers.Network | null = null;
+  private network: ethers.Network;
   private wallet: ethers.Wallet | null = null;
   private currentRpcIndex = 0;
 
   constructor() {
-    // Creating provider with the first endpoint - not use staticNetwork to avoid timeoutt issues
-    this.provider = new ethers.JsonRpcProvider(RPC_ENDPOINTS[this.currentRpcIndex]);
+    // Create network object for 0G Galileo Testnet
+    this.network = new ethers.Network('0g-galileo-testnet', OG_CONFIG.chainId);
+    
+    // Creating provider with static network configuration and extended timeout
+    this.provider = new ethers.JsonRpcProvider(
+      RPC_ENDPOINTS[this.currentRpcIndex],
+      this.network,
+      { 
+        staticNetwork: this.network
+      }
+    );
   }
 
   async connect(): Promise<boolean> {
@@ -25,8 +34,14 @@ export class OGNetworkClient {
         console.log(`Connecting to 0G network (attempt ${attempt + 1}/${RPC_ENDPOINTS.length})...`);
         console.log('RPC URL:', rpcUrl);
         
-        // Creating new provider for this endpoint not using staticNetwork to avoid timeout issues
-        this.provider = new ethers.JsonRpcProvider(rpcUrl);
+        // Creating new provider for this endpoint with static network configuration
+        this.provider = new ethers.JsonRpcProvider(
+          rpcUrl,
+          this.network,
+          { 
+            staticNetwork: this.network
+          }
+        );
         
         // Testing basic connectivity with a simple chainId 
         console.log('  └─ Testing chain ID...');
@@ -69,9 +84,10 @@ export class OGNetworkClient {
           return false;
         }
         
-        // Wait a bit before trying the next endpoint
-        console.log(`⏳ Trying next endpoint in 2 seconds...`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait with exponential backoff before trying the next endpoint
+        const delay = Math.min(2000 * Math.pow(2, attempt), 10000);
+        console.log(`⏳ Trying next endpoint in ${delay/1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
     
@@ -226,5 +242,19 @@ export class OGNetworkClient {
       console.error('Failed to get gas price:', error);
       throw error;
     }
+  }
+
+  /**
+   * Get the ethers provider instance
+   */
+  getProvider(): ethers.JsonRpcProvider {
+    return this.provider;
+  }
+
+  /**
+   * Get the wallet signer if connected
+   */
+  getSigner(): ethers.Wallet | null {
+    return this.wallet;
   }
 }

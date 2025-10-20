@@ -17,7 +17,7 @@ async function test0GConnection() {
       console.log('📊 Network Info:', networkInfo);
       
       // Test balance query (using a known testnet address)
-      const testAddress = '0x368E45F763a89A38dE8A6533F20ED147FE73408B';
+      const testAddress = '0x6975253db7f4ab6d66799440617a81a0b4fa5708';
       const balance = await client.getBalance(testAddress);
       console.log(`💰 Balance for ${testAddress}: ${balance} A0GI`);
       

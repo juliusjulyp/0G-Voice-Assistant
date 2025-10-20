@@ -1,0 +1,445 @@
+/* Live AI Insights Styles */
+.live-ai-insights {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* AI Brain Header */
+.ai-brain-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brain-icon {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #00d4ff, #ff00ff);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: white;
+}
+
+.learning-pulse {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  background: #00ff88;
+  border-radius: 50%;
+  animation: pulse-glow 2s infinite;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+}
+
+.brain-status h3 {
+  color: #fff;
+  margin: 0 0 0.25rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.brain-status .status {
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.brain-status .status.active {
+  background: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.brain-status .status.inactive {
+  background: rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.3);
+}
+
+/* Confidence Meter */
+.confidence-meter {
+  margin-left: auto;
+  text-align: right;
+  min-width: 120px;
+}
+
+.confidence-label {
+  color: #b0b0b0;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.confidence-bar {
+  width: 100px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4757, #ffa502, #00ff88);
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+
+.confidence-value {
+  color: #00d4ff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Memory Statistics Grid */
+.memory-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.memory-stat {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.memory-stat:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(0, 212, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.memory-stat .stat-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 212, 255, 0.2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00d4ff;
+  font-size: 1.1rem;
+}
+
+.memory-stat .stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.memory-stat .stat-label {
+  font-size: 0.8rem;
+  color: #b0b0b0;
+  line-height: 1.2;
+}
+
+/* Insights Section */
+.insights-section h4 {
+  color: #fff;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.insights-section h4 i {
+  color: #00d4ff;
+}
+
+.insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.insight-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.insight-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(0, 212, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.insight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.insight-pattern {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.insight-frequency {
+  background: rgba(0, 212, 255, 0.2);
+  color: #00d4ff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.insight-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metric-label {
+  color: #b0b0b0;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.metric-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.metric-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s ease;
+}
+
+.metric-fill.success {
+  background: linear-gradient(90deg, #ff4757, #00ff88);
+}
+
+.metric-fill.optimization {
+  background: linear-gradient(90deg, #ffa502, #00d4ff);
+}
+
+.metric-value {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.insight-recommendation {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.insight-recommendation i {
+  color: #00d4ff;
+  margin-top: 0.1rem;
+  font-size: 0.8rem;
+}
+
+/* No Insights State */
+.no-insights {
+  text-align: center;
+  padding: 2rem;
+  color: #b0b0b0;
+}
+
+.no-insights i {
+  font-size: 2.5rem;
+  color: #00d4ff;
+  margin-bottom: 1rem;
+  animation: grow 2s ease-in-out infinite;
+}
+
+@keyframes grow {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.no-insights p {
+  margin-bottom: 0.5rem;
+}
+
+.no-insights .hint {
+  font-size: 0.85rem;
+  color: #808080;
+  font-style: italic;
+}
+
+/* Learning Indicator */
+.learning-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #b0b0b0;
+  font-size: 0.85rem;
+}
+
+.learning-dots {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.learning-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00d4ff;
+  animation: learning-pulse 1.5s ease-in-out infinite;
+}
+
+.learning-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.learning-dots span:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.learning-dots span:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes learning-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Loading and Error States */
+.ai-insights-loading,
+.ai-insights-error {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #b0b0b0;
+}
+
+.ai-insights-error i {
+  font-size: 2rem;
+  color: #ff4757;
+  margin-bottom: 1rem;
+}
+
+.retry-btn {
+  background: rgba(0, 212, 255, 0.2);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: #00d4ff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+  background: rgba(0, 212, 255, 0.3);
+  border-color: #00d4ff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ai-brain-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .confidence-meter {
+    margin: 0;
+  }
+  
+  .memory-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .insight-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .insight-metrics {
+    grid-template-columns: 1fr;
+  }
+  
+  .learning-indicator {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .live-ai-insights {
+    padding: 1.5rem;
+  }
+  
+  .memory-stat {
+    padding: 1rem;
+  }
+  
+  .insight-card {
+    padding: 1.25rem;
+  }
+}
