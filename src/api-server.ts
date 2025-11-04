@@ -16,6 +16,9 @@ import ContractAnalysisEngine from './contract-analysis-engine.js';
 import DynamicToolGenerator from './dynamic-tool-generator.js';
 import ContractExplorer from './contract-explorer.js';
 import ContractTestingFramework from './contract-testing-framework.js';
+import OGComputeClient from './ai-compute-client.js';
+import ZeroGPrecompiledContractsClient from './precompiled-contracts-client.js';
+import AIVoiceCommandHandler from './ai-voice-commands.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -71,6 +74,9 @@ export class ZeroGAPIServer {
   private dynamicToolGenerator: DynamicToolGenerator;
   private contractExplorer: ContractExplorer;
   private testingFramework: ContractTestingFramework;
+  private computeClient: OGComputeClient;
+  private precompiledClient: ZeroGPrecompiledContractsClient;
+  private voiceCommandHandler: AIVoiceCommandHandler;
   private activeSessions: Map<string, any> = new Map();
   
   private readonly config: APIConfig = {
@@ -109,6 +115,15 @@ export class ZeroGAPIServer {
     this.dynamicToolGenerator = new DynamicToolGenerator(this.networkClient);
     this.contractExplorer = new ContractExplorer(this.networkClient);
     this.testingFramework = new ContractTestingFramework(this.networkClient, this.contractExplorer);
+    this.computeClient = new OGComputeClient(this.networkClient);
+    this.precompiledClient = new ZeroGPrecompiledContractsClient(this.networkClient);
+    this.voiceCommandHandler = new AIVoiceCommandHandler(
+      this.networkClient,
+      this.storageClient,
+      this.kvStorageClient,
+      this.computeClient,
+      this.precompiledClient
+    );
 
     this.setupMiddleware();
     this.setupRoutes();
@@ -343,6 +358,8 @@ export class ZeroGAPIServer {
         if (privateKey) {
           this.networkClient.connectWallet(privateKey);
           this.kvStorageClient.connectWallet(privateKey);
+          await this.computeClient.connectWallet(privateKey);
+          this.precompiledClient.connectWallet(privateKey);
         }
 
         // Initialize user
@@ -581,6 +598,115 @@ export class ZeroGAPIServer {
       }
     });
 
+    this.app.post('/api/v1/storage/stream/upload', upload.single('file'), async (req: Request, res: Response) => {
+      try {
+        if (!req.file) {
+          return res.status(400).json({
+            success: false,
+            error: 'No file uploaded'
+          });
+        }
+
+        const { chunkSize = 1024 * 1024 } = req.body;
+
+        const result = await this.storageClient.streamUpload(req.file.path, parseInt(chunkSize));
+        
+        // Clean up uploaded file
+        fs.unlinkSync(req.file.path);
+        
+        res.json({
+          success: true,
+          result,
+          message: 'Stream upload completed successfully'
+        });
+      } catch (error) {
+        console.error('Stream upload error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Stream upload failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/storage/stream/download', async (req: Request, res: Response) => {
+      try {
+        const { rootHash, outputPath, chunkSize = 1024 * 1024 } = req.body;
+        
+        if (!rootHash) {
+          return res.status(400).json({
+            success: false,
+            error: 'Root hash is required'
+          });
+        }
+
+        const defaultOutputPath = outputPath || `downloads/stream_${rootHash}`;
+        const result = await this.storageClient.streamDownload(rootHash, defaultOutputPath, parseInt(chunkSize));
+        
+        res.json({
+          success: true,
+          result,
+          message: 'Stream download completed successfully'
+        });
+      } catch (error) {
+        console.error('Stream download error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Stream download failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/storage/stream/upload-chunks', async (req: Request, res: Response) => {
+      try {
+        const { chunks, streamId } = req.body;
+        
+        if (!Array.isArray(chunks) || chunks.length === 0) {
+          return res.status(400).json({
+            success: false,
+            error: 'Chunks array is required'
+          });
+        }
+
+        // Convert base64 chunks to buffers
+        const bufferChunks = chunks.map(chunk => Buffer.from(chunk, 'base64'));
+        
+        const result = await this.storageClient.uploadFromStream(bufferChunks, streamId);
+        
+        res.json({
+          success: true,
+          result,
+          message: 'Stream upload from chunks completed successfully'
+        });
+      } catch (error) {
+        console.error('Stream upload from chunks error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Stream upload from chunks failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.get('/api/v1/storage/stream/stats', async (req: Request, res: Response) => {
+      try {
+        const stats = this.storageClient.getStreamingStats();
+        res.json({
+          success: true,
+          stats,
+          timestamp: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('Streaming stats error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get streaming stats',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
     this.app.post('/api/v1/storage/download', async (req: Request, res: Response) => {
       try {
         const { rootHash, outputPath } = req.body;
@@ -747,6 +873,198 @@ export class ZeroGAPIServer {
       }
     });
 
+    // AI Compute Network Routes
+    this.app.get('/api/v1/compute/providers', async (req: Request, res: Response) => {
+      try {
+        const providers = await this.computeClient.getComputeProviders();
+        res.json({
+          success: true,
+          providers,
+          count: providers.length
+        });
+      } catch (error) {
+        console.error('Compute providers error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get compute providers',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/compute/deploy-model', upload.single('model'), async (req: Request, res: Response) => {
+      try {
+        if (!req.file) {
+          return res.status(400).json({
+            success: false,
+            error: 'No model file uploaded'
+          });
+        }
+
+        const { name, type, description } = req.body;
+        
+        if (!name || !type) {
+          return res.status(400).json({
+            success: false,
+            error: 'Model name and type are required'
+          });
+        }
+
+        const modelBuffer = fs.readFileSync(req.file.path);
+        
+        const modelId = await this.computeClient.deployModel(modelBuffer, {
+          name,
+          type,
+          description: description || `${type} model deployed via 0G Voice Assistant`
+        });
+
+        // Clean up uploaded file
+        fs.unlinkSync(req.file.path);
+
+        res.json({
+          success: true,
+          modelId,
+          message: 'Model deployed successfully to 0G Compute Network',
+          balance: this.computeClient.getAccountBalance()
+        });
+      } catch (error) {
+        console.error('Model deployment error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Model deployment failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/compute/inference', async (req: Request, res: Response) => {
+      try {
+        const { modelId, inputData, options = {} } = req.body;
+        
+        if (!modelId || !inputData) {
+          return res.status(400).json({
+            success: false,
+            error: 'Model ID and input data are required'
+          });
+        }
+
+        const inferenceJob = await this.computeClient.runInference(modelId, inputData, options);
+
+        res.json({
+          success: true,
+          job: inferenceJob,
+          output: inferenceJob.output_data,
+          cost: inferenceJob.cost,
+          latency: inferenceJob.latency_ms,
+          balance: this.computeClient.getAccountBalance()
+        });
+      } catch (error) {
+        console.error('Inference error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Inference failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/compute/fine-tune', upload.single('dataset'), async (req: Request, res: Response) => {
+      try {
+        if (!req.file) {
+          return res.status(400).json({
+            success: false,
+            error: 'No dataset file uploaded'
+          });
+        }
+
+        const { baseModelId, epochs, learning_rate, provider_id } = req.body;
+        
+        if (!baseModelId) {
+          return res.status(400).json({
+            success: false,
+            error: 'Base model ID is required'
+          });
+        }
+
+        const datasetBuffer = fs.readFileSync(req.file.path);
+        
+        const fineTuningJob = await this.computeClient.fineTuneModel(baseModelId, datasetBuffer, {
+          epochs: epochs ? parseInt(epochs) : undefined,
+          learning_rate: learning_rate ? parseFloat(learning_rate) : undefined,
+          provider_id
+        });
+
+        // Clean up uploaded file
+        fs.unlinkSync(req.file.path);
+
+        res.json({
+          success: true,
+          job: fineTuningJob,
+          estimatedCost: fineTuningJob.estimated_cost,
+          balance: this.computeClient.getAccountBalance()
+        });
+      } catch (error) {
+        console.error('Fine-tuning error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Fine-tuning failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.get('/api/v1/compute/stats', async (req: Request, res: Response) => {
+      try {
+        const stats = await this.computeClient.getUsageStats();
+        const balance = this.computeClient.getAccountBalance();
+        const isConnected = this.computeClient.isWalletConnected();
+
+        res.json({
+          success: true,
+          stats,
+          balance,
+          isConnected,
+          walletAddress: this.computeClient.getWalletAddress()
+        });
+      } catch (error) {
+        console.error('Compute stats error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get compute stats',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/compute/deposit', async (req: Request, res: Response) => {
+      try {
+        const { amount } = req.body;
+        
+        if (!amount || amount <= 0) {
+          return res.status(400).json({
+            success: false,
+            error: 'Valid amount is required'
+          });
+        }
+
+        const txHash = await this.computeClient.depositFunds(parseFloat(amount));
+
+        res.json({
+          success: true,
+          transactionHash: txHash,
+          newBalance: this.computeClient.getAccountBalance(),
+          message: `Deposited ${amount} 0G to compute account`
+        });
+      } catch (error) {
+        console.error('Deposit error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Deposit failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
     // Network Routes
     this.app.post('/api/v1/network/connect', async (req: Request, res: Response) => {
       try {
@@ -806,6 +1124,8 @@ export class ZeroGAPIServer {
         this.networkClient.connectWallet(privateKey);
         this.storageClient.connectWallet(privateKey);
         this.kvStorageClient.connectWallet(privateKey);
+        await this.computeClient.connectWallet(privateKey);
+        this.precompiledClient.connectWallet(privateKey);
         
         const walletAddress = this.networkClient.getWalletAddress();
         
@@ -819,6 +1139,678 @@ export class ZeroGAPIServer {
         res.status(500).json({
           success: false,
           error: 'Wallet connection failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    // Enhanced KV Storage Routes
+    this.app.post('/api/v1/kv/set', async (req: Request, res: Response) => {
+      try {
+        const { key, value, ttl } = req.body;
+        
+        if (!key || value === undefined) {
+          return res.status(400).json({
+            success: false,
+            error: 'Key and value are required'
+          });
+        }
+
+        const result = await this.kvStorageClient.setKV(key, value, ttl);
+        res.json({
+          success: true,
+          result,
+          key,
+          message: 'Key-value pair stored successfully'
+        });
+      } catch (error) {
+        console.error('KV set error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'KV set failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.get('/api/v1/kv/get/:key', async (req: Request, res: Response) => {
+      try {
+        const { key } = req.params;
+        
+        const value = await this.kvStorageClient.getKV(key);
+        
+        if (value === null) {
+          return res.status(404).json({
+            success: false,
+            error: 'Key not found'
+          });
+        }
+
+        res.json({
+          success: true,
+          key,
+          value,
+          message: 'Value retrieved successfully'
+        });
+      } catch (error) {
+        console.error('KV get error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'KV get failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.get('/api/v1/kv/list', async (req: Request, res: Response) => {
+      try {
+        const { prefix, limit = 100, offset = 0, reverse = false } = req.query;
+        
+        const options = {
+          prefix: prefix as string,
+          limit: parseInt(limit as string),
+          offset: parseInt(offset as string),
+          reverse: reverse === 'true'
+        };
+
+        const keys = await this.kvStorageClient.listKeys(options);
+        res.json({
+          success: true,
+          keys,
+          count: keys.length,
+          options
+        });
+      } catch (error) {
+        console.error('KV list error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'KV list failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/kv/batch', async (req: Request, res: Response) => {
+      try {
+        const { operations } = req.body;
+        
+        if (!Array.isArray(operations) || operations.length === 0) {
+          return res.status(400).json({
+            success: false,
+            error: 'Operations array is required'
+          });
+        }
+
+        // Convert operations to proper format
+        const batchOps = operations.map(op => ({
+          key: op.key,
+          value: Buffer.from(JSON.stringify(op.value)),
+          operation: op.operation || 'set'
+        }));
+
+        const results = await this.kvStorageClient.batchSet(batchOps);
+        res.json({
+          success: true,
+          results,
+          operationsCount: operations.length,
+          message: 'Batch operation completed'
+        });
+      } catch (error) {
+        console.error('KV batch error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'KV batch failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.delete('/api/v1/kv/:key', async (req: Request, res: Response) => {
+      try {
+        const { key } = req.params;
+        
+        const success = await this.kvStorageClient.deleteKV(key);
+        res.json({
+          success,
+          key,
+          message: success ? 'Key deleted successfully' : 'Key not found'
+        });
+      } catch (error) {
+        console.error('KV delete error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'KV delete failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/kv/stream/subscribe', async (req: Request, res: Response) => {
+      try {
+        const { streamId } = req.body;
+        
+        if (!streamId) {
+          return res.status(400).json({
+            success: false,
+            error: 'Stream ID is required'
+          });
+        }
+
+        const subscriptionId = await this.kvStorageClient.subscribeToStream(
+          streamId,
+          (data) => {
+            // In a real implementation, this would use WebSocket to push data
+            console.log('Stream update:', data);
+          }
+        );
+
+        res.json({
+          success: true,
+          subscriptionId,
+          streamId,
+          message: 'Subscribed to stream successfully'
+        });
+      } catch (error) {
+        console.error('Stream subscribe error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Stream subscription failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/kv/stream/upload', async (req: Request, res: Response) => {
+      try {
+        const { streamId, chunks } = req.body;
+        
+        if (!streamId || !Array.isArray(chunks)) {
+          return res.status(400).json({
+            success: false,
+            error: 'Stream ID and chunks array are required'
+          });
+        }
+
+        // Convert chunks to Buffer array
+        const dataStream = chunks.map(chunk => Buffer.from(chunk, 'base64'));
+        
+        const uploadId = await this.kvStorageClient.streamUpload(streamId, dataStream);
+        res.json({
+          success: true,
+          uploadId,
+          streamId,
+          chunksCount: chunks.length,
+          message: 'Stream upload completed successfully'
+        });
+      } catch (error) {
+        console.error('Stream upload error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Stream upload failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.get('/api/v1/kv/stats', async (req: Request, res: Response) => {
+      try {
+        const stats = await this.kvStorageClient.getEnhancedStorageStats();
+        res.json({
+          success: true,
+          stats,
+          timestamp: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('KV stats error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get KV stats',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    // AI Voice Commands Routes
+    this.app.post('/api/v1/ai/voice-command', async (req: Request, res: Response) => {
+      try {
+        const { command, userId } = req.body;
+        
+        if (!command) {
+          return res.status(400).json({
+            success: false,
+            error: 'Voice command is required'
+          });
+        }
+
+        // Auto-connect test wallet for AI operations if not already connected
+        const testPrivateKey = process.env.ZERO_G_PRIVATE_KEY;
+        if (testPrivateKey && !this.kvStorageClient.isWalletConnected()) {
+          console.log('🔑 Auto-connecting test wallet for AI operations...');
+          this.networkClient.connectWallet(testPrivateKey);
+          this.kvStorageClient.connectWallet(testPrivateKey);
+          await this.computeClient.connectWallet(testPrivateKey);
+          this.precompiledClient.connectWallet(testPrivateKey);
+        }
+
+        // Initialize user if provided
+        if (userId) {
+          await this.aiStateManager.initializeUser(userId);
+        }
+
+        const result = await this.voiceCommandHandler.processVoiceCommand(command);
+        
+        // Record conversation for learning if user provided
+        if (userId) {
+          await this.aiStateManager.recordConversation(
+            command,
+            result.response,
+            result.actionTaken || 'voice_command',
+            result.success,
+            undefined, // No gas used for voice commands
+            undefined  // No transaction hash for voice commands
+          );
+        }
+
+        res.json({
+          success: result.success,
+          response: result.response,
+          data: result.data,
+          actionTaken: result.actionTaken,
+          suggestions: result.suggestions,
+          timestamp: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('AI voice command error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'AI voice command failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.get('/api/v1/ai/commands', async (req: Request, res: Response) => {
+      try {
+        const { category } = req.query;
+        
+        let commands;
+        if (category) {
+          commands = this.voiceCommandHandler.getCommandsByCategory(category as string);
+        } else {
+          commands = this.voiceCommandHandler.getAvailableCommands();
+        }
+        
+        res.json({
+          success: true,
+          commands,
+          count: commands.length,
+          category: category || 'all'
+        });
+      } catch (error) {
+        console.error('Get AI commands error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get AI commands',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.get('/api/v1/ai/commands/stats', async (req: Request, res: Response) => {
+      try {
+        const stats = this.voiceCommandHandler.getCommandStats();
+        res.json({
+          success: true,
+          stats,
+          timestamp: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('AI command stats error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get AI command stats',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/ai/optimize', async (req: Request, res: Response) => {
+      try {
+        const { modelType, operation } = req.body;
+        
+        if (!operation) {
+          return res.status(400).json({
+            success: false,
+            error: 'Operation type is required (e.g., "optimize model for 0G")'
+          });
+        }
+
+        const result = await this.voiceCommandHandler.processVoiceCommand(`optimize ${modelType || 'model'} for 0G network`);
+        
+        res.json({
+          success: result.success,
+          optimization: result.data,
+          recommendations: result.suggestions,
+          message: result.response
+        });
+      } catch (error) {
+        console.error('AI optimization error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'AI optimization failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/ai/cost-estimate', async (req: Request, res: Response) => {
+      try {
+        const { operation, quantity, modelType } = req.body;
+        
+        if (!operation) {
+          return res.status(400).json({
+            success: false,
+            error: 'Operation type is required (inference, training, deployment, storage)'
+          });
+        }
+
+        const command = `estimate cost for ${quantity || 100} ${operation} operations`;
+        const result = await this.voiceCommandHandler.processVoiceCommand(command);
+        
+        res.json({
+          success: result.success,
+          estimate: result.data,
+          breakdown: {
+            operation,
+            quantity: quantity || 100,
+            modelType: modelType || 'general'
+          },
+          message: result.response
+        });
+      } catch (error) {
+        console.error('AI cost estimation error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'AI cost estimation failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    // Precompiled Contracts Routes
+    this.app.post('/api/v1/precompile/da/sign', async (req: Request, res: Response) => {
+      try {
+        const { data } = req.body;
+        
+        if (!data) {
+          return res.status(400).json({
+            success: false,
+            error: 'Data to sign is required'
+          });
+        }
+
+        const signature = await this.precompiledClient.signData(data);
+        res.json({
+          success: true,
+          signature,
+          message: 'Data signed successfully'
+        });
+      } catch (error) {
+        console.error('DA signing error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'DA signing failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/precompile/da/verify', async (req: Request, res: Response) => {
+      try {
+        const { dataHash, signature } = req.body;
+        
+        if (!dataHash || !signature) {
+          return res.status(400).json({
+            success: false,
+            error: 'Data hash and signature are required'
+          });
+        }
+
+        const isValid = await this.precompiledClient.verifySignature(dataHash, signature);
+        res.json({
+          success: true,
+          isValid,
+          dataHash,
+          message: isValid ? 'Signature is valid' : 'Signature is invalid'
+        });
+      } catch (error) {
+        console.error('DA verification error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'DA verification failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/precompile/da/multisig', async (req: Request, res: Response) => {
+      try {
+        const { data, requiredSigners, threshold, expirationTime } = req.body;
+        
+        if (!data) {
+          return res.status(400).json({
+            success: false,
+            error: 'Data is required for multi-signature request'
+          });
+        }
+
+        const signingRequest = {
+          data,
+          requiredSigners,
+          threshold,
+          expirationTime: expirationTime ? new Date(expirationTime) : undefined
+        };
+
+        const result = await this.precompiledClient.createSigningRequest(signingRequest);
+        res.json({
+          success: true,
+          result,
+          message: 'Multi-signature request created successfully'
+        });
+      } catch (error) {
+        console.error('Multi-signature request error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Multi-signature request failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/precompile/wrapped/wrap', async (req: Request, res: Response) => {
+      try {
+        const { amount } = req.body;
+        
+        if (!amount || parseFloat(amount) <= 0) {
+          return res.status(400).json({
+            success: false,
+            error: 'Valid amount is required'
+          });
+        }
+
+        const result = await this.precompiledClient.wrapTokens(amount);
+        res.json({
+          success: true,
+          result,
+          message: `Successfully wrapped ${amount} 0G tokens`
+        });
+      } catch (error) {
+        console.error('Token wrapping error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Token wrapping failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/precompile/wrapped/unwrap', async (req: Request, res: Response) => {
+      try {
+        const { amount } = req.body;
+        
+        if (!amount || parseFloat(amount) <= 0) {
+          return res.status(400).json({
+            success: false,
+            error: 'Valid amount is required'
+          });
+        }
+
+        const result = await this.precompiledClient.unwrapTokens(amount);
+        res.json({
+          success: true,
+          result,
+          message: `Successfully unwrapped ${amount} w0G tokens`
+        });
+      } catch (error) {
+        console.error('Token unwrapping error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Token unwrapping failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/precompile/wrapped/delegate', async (req: Request, res: Response) => {
+      try {
+        const { delegate, amount } = req.body;
+        
+        if (!delegate || !amount || parseFloat(amount) <= 0) {
+          return res.status(400).json({
+            success: false,
+            error: 'Valid delegate address and amount are required'
+          });
+        }
+
+        const result = await this.precompiledClient.delegateTokens(delegate, amount);
+        res.json({
+          success: true,
+          result,
+          message: `Successfully delegated ${amount} w0G tokens to ${delegate}`
+        });
+      } catch (error) {
+        console.error('Token delegation error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Token delegation failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/precompile/ai/deploy', async (req: Request, res: Response) => {
+      try {
+        const { modelHash, inferencePrice } = req.body;
+        
+        if (!modelHash || !inferencePrice) {
+          return res.status(400).json({
+            success: false,
+            error: 'Model hash and inference price are required'
+          });
+        }
+
+        const model = await this.precompiledClient.deployAIModel(modelHash, inferencePrice);
+        res.json({
+          success: true,
+          model,
+          message: 'AI model deployed successfully via precompile'
+        });
+      } catch (error) {
+        console.error('AI model deployment error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'AI model deployment failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.post('/api/v1/precompile/ai/inference', async (req: Request, res: Response) => {
+      try {
+        const { modelId, inputData, maxTokens, temperature, priority } = req.body;
+        
+        if (!modelId || !inputData) {
+          return res.status(400).json({
+            success: false,
+            error: 'Model ID and input data are required'
+          });
+        }
+
+        const inferenceRequest = {
+          modelId,
+          inputData,
+          maxTokens,
+          temperature,
+          priority
+        };
+
+        const result = await this.precompiledClient.runAIInference(inferenceRequest);
+        res.json({
+          success: true,
+          result,
+          message: 'AI inference completed successfully'
+        });
+      } catch (error) {
+        console.error('AI inference error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'AI inference failed',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.get('/api/v1/precompile/ai/model/:modelId', async (req: Request, res: Response) => {
+      try {
+        const { modelId } = req.params;
+        
+        const model = await this.precompiledClient.getAIModelInfo(modelId);
+        
+        if (!model) {
+          return res.status(404).json({
+            success: false,
+            error: 'Model not found'
+          });
+        }
+
+        res.json({
+          success: true,
+          model,
+          message: 'Model information retrieved successfully'
+        });
+      } catch (error) {
+        console.error('Model info error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get model information',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    this.app.get('/api/v1/precompile/stats', async (req: Request, res: Response) => {
+      try {
+        const stats = await this.precompiledClient.getPrecompileStats();
+        res.json({
+          success: true,
+          stats,
+          timestamp: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('Precompile stats error:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get precompile stats',
           message: error instanceof Error ? error.message : 'Unknown error'
         });
       }

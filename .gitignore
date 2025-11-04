@@ -65,3 +65,33 @@ jspm_packages/
 # Temporary folders
 tmp/
 temp/
+
+# Project-specific files
+scripts/vite.log
+scripts/server.log
+*.log.txt
+
+# Sensitive wallet/private key files  
+scripts/wallet-*.json
+scripts/private-key-*
+**/private-keys/
+**/wallets/
+
+# Training data outputs
+training-data/*.jsonl.backup
+training-data/generated-*
+training-data/temp-*
+
+# Frontend build outputs
+frontend/build/
+frontend/dist/
+frontend/.cache/
+
+# Subdirectory node_modules
+*/node_modules/
+scripts/node_modules/
+frontend/node_modules/
+
+# Generated documentation
+docs/generated/
+*.md.backup

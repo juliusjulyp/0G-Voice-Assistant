@@ -3,7 +3,8 @@ import { OG_CONFIG } from './config.js';
 
 // 0G Galileo Testnet RPC endpoints with fallbacks
 const RPC_ENDPOINTS = [
-  'https://0g-galileo-testnet.drpc.org', // DRPC (primary - working)
+  OG_CONFIG.rpcUrl, // Primary RPC from config (supports QuickNode)
+  'https://0g-galileo-testnet.drpc.org', // DRPC (fallback)
   'https://evmrpc-testnet.0g.ai', // Official 0G RPC (fallback)
 ];
 

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0G Broker Setup - Official Implementation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+            color: #334155;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1e40af;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step h3 {
+            margin: 0 0 15px 0;
+            color: #1e40af;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 8px 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        .success {
+            background: #dcfce7;
+            border: 1px solid #16a34a;
+            color: #166534;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .log {
+            background: #0f172a;
+            color: #cbd5e1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+            width: 120px;
+            margin: 0 10px;
+        }
+        .code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Official 0G Broker Setup</h1>
+        
+        <div class="info">
+            <strong>📚 Exact Implementation from 0G Documentation</strong><br>
+            This uses the real @0glabs/0g-serving-broker package with proper Vite polyfills.
+        </div>
+
+        <div class="step">
+            <h3>Step 1: Check MetaMask</h3>
+            <p>Verify MetaMask is installed and available</p>
+            <button onclick="checkMetaMask()" id="metamask-btn">Check MetaMask</button>
+            <div id="metamask-status"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Initialize Broker</h3>
+            <p>Create BrowserProvider and initialize 0G Broker (exact code from docs)</p>
+            <button onclick="initializeBroker()" id="init-btn" disabled>Initialize Broker</button>
+            <div id="init-status"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Fund Account</h3>
+            <p>Add 0G tokens to broker ledger</p>
+            <input type="number" id="fund-amount" min="0.1" max="10" step="0.1" value="1" disabled>
+            <span>0G tokens</span>
+            <button onclick="fundAccount()" id="fund-btn" disabled>Fund Account</button>
+            <div id="fund-status"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Check Balance</h3>
+            <p>Verify broker account balance</p>
+            <button onclick="checkBalance()" id="balance-btn" disabled>Check Balance</button>
+            <div id="balance-status"></div>
+        </div>
+
+        <div class="log" id="log">Loading 0G SDK with polyfills...\n</div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+/* Voice Interface Styles */
+.voice-interface {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.voice-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.voice-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--accent-blue);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.voice-btn:hover {
+  background-color: var(--accent-blue-hover);
+  transform: translateY(-1px);
+}
+
+.voice-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.voice-btn.listening {
+  background-color: #ef4444;
+  animation: pulse-red 2s infinite;
+}
+
+.voice-btn.listening:hover {
+  background-color: #dc2626;
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+}
+
+.voice-btn-text {
+  font-weight: 600;
+}
+
+.voice-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--gray-600);
+}
+
+.voice-indicator {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.voice-wave {
+  width: 3px;
+  height: 16px;
+  background-color: var(--accent-blue);
+  border-radius: 2px;
+  animation: voice-wave 1.2s ease-in-out infinite;
+}
+
+.voice-wave:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.voice-wave:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes voice-wave {
+  0%, 100% {
+    height: 8px;
+    opacity: 0.4;
+  }
+  50% {
+    height: 20px;
+    opacity: 1;
+  }
+}
+
+.voice-text {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--accent-blue);
+}
+
+.voice-transcript {
+  padding: var(--space-3);
+  background-color: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--accent-blue);
+}
+
+.transcript-label {
+  font-size: var(--font-size-xs);
+  color: var(--gray-500);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: var(--space-2);
+}
+
+.transcript-text {
+  font-size: var(--font-size-sm);
+  color: var(--gray-700);
+  font-style: italic;
+}
