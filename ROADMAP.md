@@ -6,22 +6,23 @@ The core backend is operational on 0G Galileo Testnet with 29 MCP tools
 
 **What's working today:**
 
-- MCP server with these network operations (connect, transact, deploy, gas estimation)
+- MCP server with network operations (connect, transact, deploy, gas estimation)
 - 0G Storage integration with Merkle tree verification, upload/download, buffer uploads
-- 0G KV Storage for persistent AI state, user preferences, and conversation history
-- AI learning system with pattern recognitio and cross-session memory
-- Contract analysis engine with automatic ABI extraction and pattern recognition (ERC20, ERC721, Proxy, Ownable)
+- Contract analysis engine with bytecode retrieval and pattern recognition (ERC20, ERC721, Proxy, Ownable)
 - Dynamic tool generation — auto-creates 15-25 MCP tools per discovered contract
+- REST API server with WebSocket support, rate limiting, CORS, and security headers
 - React-based frontend with dashboard, developer tools, and AI compute pages
 
 ## In Progress
 
+- **0G KV Storage** — Client exists but all store/retrieve methods return placeholders. Needs real 0G KV persistence
+- **AI learning persistence** — Pattern recognition works in-memory but state is lost on restart. Needs functional KV storage
+- **AI compute integration** — Client scaffolded but `deployModel()`, `runInference()`, and `depositFunds()` throw "not implemented"
 - **Frontend refinement** — Dashboard analytics, real-time performance metrics, and developer tools UI polish
 - **Fine-tuning service** — Dedicated service for AI model fine-tuning with 0G Serving Broker integration
 - Contract workflows for multi-step operations (token swaps, NFT purchases)
 - Automated contract testing framework with security analysis and gas optimization
 - Knowledge ingestion pipeline (blockchain scanner, documentation crawler, task interpreter)
-- REST API server with WebSocket support, rate limiting, CORS, and security headers
 
 ## Up Next
 

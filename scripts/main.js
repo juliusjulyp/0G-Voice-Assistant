@@ -50,7 +50,7 @@ window.initializeBroker = async function() {
     log('🤖 Initializing 0G Broker ...');
     
     try {
-        // Exact implementation from 0G docs:
+        
         log('Creating BrowserProvider...');
         provider = new BrowserProvider(window.ethereum);
         
