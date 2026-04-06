@@ -19,6 +19,11 @@ export const OG_CONFIG = {
     decimals: 18
   },
   
+  // KV Storage settings
+  kvRpcUrl: process.env.KV_RPC_URL || 'http://3.101.147.150:6789',
+  flowContractAddress: process.env.FLOW_CONTRACT_ADDRESS || '0x22E03a6A89B950F1c82ec5e74F8eCa321a105296',
+  indexerRpcUrl: process.env.INDEXER_RPC_URL || 'https://indexer-storage-testnet-turbo.0g.ai',
+
   // Environment settings
   nodeEnv: process.env.NODE_ENV || 'development',
   debug: process.env.DEBUG === 'true'

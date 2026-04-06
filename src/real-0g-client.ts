@@ -1,4 +1,4 @@
-import { Indexer, ZgFile, getFlowContract } from '@0glabs/0g-ts-sdk';
+import { Indexer, ZgFile, getFlowContract } from '@0gfoundation/0g-ts-sdk';
 import { ethers } from 'ethers';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -141,7 +141,7 @@ export class Real0GClient {
   }
 
   /**
-   * Estimate fine-tuning costs (placeholder - requires real provider pricing)
+   * Estimate fine-tuning costs (placeholder - requires  provider pricing)
    */
   estimateFineTuningCost(config: {
     epochs: number;

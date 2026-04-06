@@ -1,4 +1,4 @@
-import { ZgFile, Indexer } from '@0glabs/0g-ts-sdk';
+import { ZgFile, Indexer } from '@0gfoundation/0g-ts-sdk';
 import { ethers } from 'ethers';
 import { OG_CONFIG } from './config.js';
 import fs from 'fs/promises';
@@ -56,14 +56,14 @@ export class OGStorageClient {
 
   constructor() {
     this.provider = new ethers.JsonRpcProvider(OG_CONFIG.rpcUrl);
-    // Initializzing indexer without wallet - will be configured when wallet is connected
-    this.indexer = new Indexer(OG_CONFIG.storageRpcUrl, OG_CONFIG.rpcUrl, '', '');
+    // Initialize indexer without wallet - will be configured when wallet is connected
+    this.indexer = new Indexer(OG_CONFIG.storageRpcUrl);
   }
 
   connectWallet(privateKey: string): void {
     this.signer = new ethers.Wallet(privateKey, this.provider);
-    // Re-initializing indexer with wallet information
-    this.indexer = new Indexer(OG_CONFIG.storageRpcUrl, OG_CONFIG.rpcUrl, privateKey, this.signer.address);
+    // Re-initialize indexer (new SDK uses signer at upload time, not at construction)
+    this.indexer = new Indexer(OG_CONFIG.storageRpcUrl);
     console.log('🔐 Storage wallet connected:', this.signer.address);
   }
 
@@ -96,7 +96,8 @@ export class OGStorageClient {
 
       // Create ZgFile from file path
       const zgFile = await ZgFile.fromFilePath(filePath);
-      console.log(`📊 File loaded successfully, size: ${zgFile.fileSize} bytes`);
+      const fileStats = await fs.stat(filePath);
+      console.log(`📊 File loaded successfully, size: ${fileStats.size} bytes`);
 
       // Generate Merkle tree for verification
       console.log('🌳 Generating Merkle tree...');
@@ -108,32 +109,35 @@ export class OGStorageClient {
       const rootHash = tree?.rootHash();
       console.log(`🔑 File Root Hash: ${rootHash}`);
 
-      // Get file stats for size information
-      const fileStats = await fs.stat(filePath);
-
-      // Upload to network using the correct API syntax
+      // Upload to network using the new SDK API (file, rpc, signer, options)
       console.log('☁️ Uploading to 0G Storage network...');
-      const [txHash, uploadErr] = await this.indexer.upload(zgFile, 0, {
-        tags: '0x',
-        finalityRequired: true,
-        taskSize: 10,
-        expectedReplica: 1,
-        skipTx: false,
-        fee: BigInt('0')
-      });
-      
+      const [tx, uploadErr] = await this.indexer.upload(
+        zgFile,
+        OG_CONFIG.rpcUrl,
+        this.signer as any,  // ethers v5/v6 compat
+        {
+          tags: '0x',
+          finalityRequired: true,
+          taskSize: 10,
+          expectedReplica: 1,
+          skipTx: false,
+          fee: BigInt('0')
+        }
+      );
+
       if (uploadErr !== null) {
         throw new Error(`Upload error: ${uploadErr}`);
       }
 
-      console.log(`✅ Upload successful! TX: ${txHash}`);
-      
+      const txResult = tx as any;
+      console.log(`✅ Upload successful! TX: ${txResult?.txHash || tx}`);
+
       // Always close the file when done (this is important for resource cleanup)
       await zgFile.close();
 
       return {
-        rootHash: rootHash!,
-        txHash: txHash!,
+        rootHash: txResult?.rootHash || rootHash!,
+        txHash: txResult?.txHash || String(tx),
         fileSize: fileStats.size,
         fileName: path.basename(filePath)
       };

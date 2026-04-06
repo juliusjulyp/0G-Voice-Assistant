@@ -95,3 +95,6 @@ frontend/node_modules/
 # Generated documentation
 docs/generated/
 *.md.backup
+
+# Claude Code
+CLAUDE.md

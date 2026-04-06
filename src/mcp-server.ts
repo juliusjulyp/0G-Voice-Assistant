@@ -1223,9 +1223,7 @@ class OGMCPServer {
       const targetStreamId = streamId || 'user_data_v1';
       const dataBuffer = Buffer.from(value);
       
-      // Store using KV client (simulated for now)
-      // In real implementation, this would use the actual 0G KV client
-      const result = `kv_tx_${Date.now()}`;
+      const result = await this.kvStorageClient.setKV(key, value);
       
       return {
         content: [
@@ -1249,15 +1247,14 @@ class OGMCPServer {
       
       const targetStreamId = streamId || 'user_data_v1';
       
-      // Retrieve using KV client (simulated for now)
-      // In real implementation, this would use the actual 0G KV client
-      const retrievedData = `Sample data for key: ${key}`;
+      const retrievedData = await this.kvStorageClient.getKV(key);
+      const displayData = retrievedData !== null ? JSON.stringify(retrievedData) : '(no data found)';
       
       return {
         content: [
           {
             type: 'text',
-            text: `📥 Data retrieved from 0G KV Storage:\n🔑 Key: ${key}\n📊 Stream: ${targetStreamId}\n📄 Data: ${retrievedData}\n\n✅ Data successfully retrieved from 0G network!`,
+            text: `📥 Data retrieved from 0G KV Storage:\n🔑 Key: ${key}\n📊 Stream: ${targetStreamId}\n📄 Data: ${displayData}\n\n✅ Data successfully retrieved from 0G network!`,
           },
         ],
       };

@@ -8,12 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@0gfoundation/0g-ts-sdk':
+        specifier: ^1.2.1
+        version: 1.2.1(bufferutil@4.0.9)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@0glabs/0g-serving-broker':
         specifier: ^0.5.4
         version: 0.5.4(@types/circomlibjs@0.1.6)(@types/crypto-js@4.2.2)(bufferutil@4.0.9)(circomlibjs@0.1.7(bufferutil@4.0.9)(utf-8-validate@5.0.10))(crypto-js@4.2.0)(encoding@0.1.13)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(rollup@4.52.5)(tslib@2.8.1)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(utf-8-validate@5.0.10)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.76)
-      '@0glabs/0g-ts-sdk':
-        specifier: ^0.1.2
-        version: 0.1.2(bufferutil@4.0.9)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@modelcontextprotocol/sdk':
         specifier: ^1.17.4
         version: 1.20.2
@@ -93,6 +93,11 @@ importers:
 
 packages:
 
+  '@0gfoundation/0g-ts-sdk@1.2.1':
+    resolution: {integrity: sha512-1PBq+aug6p3OYh9UbEDxn+mroQ4XCjd7355wwStfd8ykyKMXHTdrSuNrfranr5TnF/uksKUWnN3HJ73gYKKDpw==}
+    peerDependencies:
+      ethers: 6.13.1
+
   '@0glabs/0g-serving-broker@0.5.4':
     resolution: {integrity: sha512-jGaP0mbGslmYQoYMLpoFS1RXb1kjq284SFWeaAH7L72U/+fdAbxHDWNzmb6pai2sf922f44OyKkgTLyjM76Cjg==}
     hasBin: true
@@ -102,11 +107,6 @@ packages:
       circomlibjs: ^0.1.6
       crypto-js: ^4.2.0
       ethers: 6.13.1
-
-  '@0glabs/0g-ts-sdk@0.1.2':
-    resolution: {integrity: sha512-zrr8X6sPCNnSQTpI4OocBjMyEnLsGJInNJZ36qdLyJPG/Jk2OXKvBqu+GYuWPSrmzH4UDRrmOsNhJqCYeY4kTA==}
-    peerDependencies:
-      ethers: ^6.13.1
 
   '@adraffy/ens-normalize@1.10.1':
     resolution: {integrity: sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw==}
@@ -4162,6 +4162,18 @@ packages:
 
 snapshots:
 
+  '@0gfoundation/0g-ts-sdk@1.2.1(bufferutil@4.0.9)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      open-jsonrpc-provider: 0.2.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
+
   '@0glabs/0g-serving-broker@0.5.4(@types/circomlibjs@0.1.6)(@types/crypto-js@4.2.2)(bufferutil@4.0.9)(circomlibjs@0.1.7(bufferutil@4.0.9)(utf-8-validate@5.0.10))(crypto-js@4.2.0)(encoding@0.1.13)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(rollup@4.52.5)(tslib@2.8.1)(typechain@8.3.2(typescript@5.9.3))(typescript@5.9.3)(utf-8-validate@5.0.10)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.76)':
     dependencies:
       '@ethersproject/bytes': 5.8.0
@@ -4210,18 +4222,6 @@ snapshots:
       - utf-8-validate
       - ws
       - zod
-
-  '@0glabs/0g-ts-sdk@0.1.2(bufferutil@4.0.9)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)':
-    dependencies:
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/keccak256': 5.8.0
-      ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      open-jsonrpc-provider: 0.2.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - supports-color
-      - utf-8-validate
 
   '@adraffy/ens-normalize@1.10.1': {}
 
