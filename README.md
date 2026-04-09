@@ -2,7 +2,7 @@
 
 A natural language development environment for the 0G blockchain. Build, deploy, and manage smart contracts and AI applications through text or voice commands — no deep blockchain expertise required.
 
-The assistant bridges the gap between developers and 0G's infrastructure (AI compute, decentralized storage, EVM) by providing a unified interface powered by the Model Context Protocol (MCP). It's designed to be accessible to AI researchers, beginners, and developers with motor disabilities alike.
+The assistant bridges the gap between developers and 0G's infrastructure (AI compute, decentralized storage, EVM) by providing a unified interface powered by the Model Context Protocol (MCP). It's designed to be accessible to AI researchers, beginners, and developers  including those with motor disabilities alike.
 
 ## Key Features
 
@@ -18,14 +18,16 @@ The assistant bridges the gap between developers and 0G's infrastructure (AI com
 
 **Knowledge Ingestion** — Blockchain scanner for contract discovery, documentation crawler, and natural language task interpretation that converts plain English to executable actions.
 
-## MCP Tools (29)
+## MCP Tools (13)
 
-| Category | Tools |
-|----------|-------|
-| **Network** (10) | `connect_to_0g`, `get_balance`, `get_network_info`, `connect_wallet`, `get_wallet_info`, `send_transaction`, `deploy_contract`, `get_transaction_status`, `estimate_gas`, `get_gas_price` |
-| **Storage** (4) | `upload_file_to_storage`, `download_file_from_storage`, `calculate_merkle_root`, `get_file_info` |
-| **AI Learning** (8) | `initialize_ai_user`, `record_conversation`, `get_personalized_suggestions`, `get_learning_insights`, `update_user_preferences`, `get_ai_memory_stats`, `store_kv_data`, `retrieve_kv_data` |
-| **Contract Intelligence** (7) | `analyze_contract`, `explore_contract`, `generate_contract_tools`, `execute_workflow`, `list_workflows`, `test_contract`, `get_contract_stats` |
+| Category | Tools | Description |
+|----------|-------|-------------|
+| **Network** (4) | `connect_to_0g`, `connect_wallet`, `get_balance`, `send_transaction` | Connect to network, manage wallet (info when called with no args), balance + network info + gas price, send/estimate/check tx status |
+| **Contracts** (3) | `deploy_contract`, `analyze_contract`, `run_workflow` | Deploy contracts, analyze/explore/test/generate tools (via `mode` param), list/execute workflows |
+| **Storage** (2) | `upload_file`, `download_file` | Upload or dry-run Merkle hash, download or check availability |
+| **KV Storage** (2) | `store_kv_data`, `retrieve_kv_data` | Read/write to 0G KV storage |
+| **AI Memory** (1) | `ai_memory` | Init, record conversations, suggestions, insights, preferences, stats (via `action` param) |
+| **Documentation** (1) | `0g_docs` | Updates, latest info, search docs, learning paths, code examples (via `action` param) |
 
 ## Quick Start
 

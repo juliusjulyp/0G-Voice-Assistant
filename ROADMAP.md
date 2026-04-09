@@ -2,14 +2,14 @@
 
 ## Current Status
 
-The core backend is operational on 0G Galileo Testnet with 29 MCP tools 
+The core backend is operational on 0G Galileo Testnet with 13 MCP tools 
 
 **What's working today:**
 
 - MCP server with network operations (connect, transact, deploy, gas estimation)
 - 0G Storage integration with Merkle tree verification, upload/download, buffer uploads
 - Contract analysis engine with bytecode retrieval and pattern recognition (ERC20, ERC721, Proxy, Ownable)
-- Dynamic tool generation — auto-creates 15-25 MCP tools per discovered contract
+- Dynamic tool generation — auto-creates 13 MCP tools per discovered contract
 - REST API server with WebSocket support, rate limiting, CORS, and security headers
 - React-based frontend with dashboard, developer tools, and AI compute pages
 

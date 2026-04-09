@@ -7,7 +7,7 @@ The project has three main layers:
 ```
 Frontend (React)  -->  API Server (Express + Socket.IO)  -->  0G Network
                             |
-                       MCP Server (29 tools)
+                       MCP Server (13 tools)
                             |
               +---------+---+---+---------+
               |         |       |         |
